@@ -1,0 +1,13 @@
+{
+  "name": "seq.node",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@tonaljs/tonal": "^4.5.1",
+    "d3-random": "^2.2.2",
+    "midi": "^1.0.0",
+    "tonal-midi": "^0.69.7",
+    "tonal-scale": "^2.2.2"
+  }
+}
