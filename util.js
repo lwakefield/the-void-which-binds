@@ -18,8 +18,11 @@ function clone (obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+function last (arr) { return arr[arr.length - 1]; }
+
 module.exports = {
     sleep,
     cmpArr,
-    clone
+    clone,
+    last
 }

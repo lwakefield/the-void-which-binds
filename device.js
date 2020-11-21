@@ -27,4 +27,4 @@ class Device {
     }
 }
 
-module.exports = { Device };
+module.exports = Device;

@@ -31,6 +31,10 @@ class ChannelSequence {
         // turn on  the next note
         this.note && this.dev.noteOn(this.note, 127, this.channel);
     }
+    updateFromPatch (patch) {
+        this.seq = patch.toSequence();
+        this.divider = patch.divider;
+    }
 }
 
 module.exports = { ChannelSequence };

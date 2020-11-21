@@ -19,12 +19,12 @@ class Patch {
     }
     toSequence () {
         const res = [];
-        const randInt = d3.randomInt.source(d3.randomLcg(patch.seed))(0, 100);
-        const randNml = d3.randomNormal.source(d3.randomLcg(patch.seed))(0, patch.spread);
-        const notes = notesInScale(patch.tonic, patch.scale);
-        const tonicIndex = notes.indexOf(patch.tonic);
+        const randInt = d3.randomInt.source(d3.randomLcg(this.seed))(0, 100);
+        const randNml = d3.randomNormal.source(d3.randomLcg(this.seed))(0, this.spread);
+        const notes = notesInScale(this.tonic, this.scale);
+        const tonicIndex = notes.indexOf(this.tonic);
         for (let i = 0; i < 16; i++) {
-            const hit = randInt() < patch.density;
+            const hit = randInt() < this.density;
             const offset = Math.round(randNml());
             res.push(hit ? notes[tonicIndex + offset] : null);
         }
