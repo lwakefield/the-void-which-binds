@@ -15,6 +15,6 @@ process.on('SIGINT', () => {
 });
 
 // TODO:
-// - [ ] transpose
+// - [x] transpose
 // - [ ] sequence mutation
 // - [ ] seed -> words

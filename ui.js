@@ -35,11 +35,12 @@ class UI {
             mkitem(this.channelName(6), () => seqToString2(this.world.channelSequences[6]), this.channelHandler(6)),
             mkitem(this.channelName(7), () => seqToString2(this.world.channelSequences[7]), this.channelHandler(7)),
             mkseparator(),
-            mkitem('seed:'.padEnd(11),    () => this.world.patch.seed,    this.reseedHandler),
-            mkitem('tonic:'.padEnd(11),   () => this.world.patch.tonic,   this.tonicHandler),
-            mkitem('scale:'.padEnd(11),   () => this.world.patch.scale,   this.scaleHandler),
-            mkitem('spread:'.padEnd(11),  () => this.world.patch.spread,  this.spreadHandler),
-            mkitem('density:'.padEnd(11), () => this.world.patch.density, this.densityHandler),
+            mkitem('seed:'.padEnd(11),      () => this.world.patch.seed,      this.reseedHandler),
+            mkitem('tonic:'.padEnd(11),     () => this.world.patch.tonic,     this.tonicHandler),
+            mkitem('transpose:'.padEnd(11), () => this.world.patch.transpose, this.transposeHandler),
+            mkitem('scale:'.padEnd(11),     () => this.world.patch.scale,     this.scaleHandler),
+            mkitem('spread:'.padEnd(11),    () => this.world.patch.spread,    this.spreadHandler),
+            mkitem('density:'.padEnd(11),   () => this.world.patch.density,   this.densityHandler),
             mkitem(
                 () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
                 () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
@@ -114,6 +115,14 @@ class UI {
         const tonic = this.world.patch.tonic;
         if (k === 'l') this.world.patch.tonic = Tonal.Note.simplify(Tonal.transpose(tonic, '2m'));
         if (k === 'h') this.world.patch.tonic = Tonal.Note.simplify(Tonal.transpose(tonic, '-2m'));
+
+        this.world.updateSequence();
+    }
+
+    static transposeHandler (k) {
+        const transpose = this.world.patch.transpose;
+        if (k === 'l') this.world.patch.transpose += 1;
+        if (k === 'h') this.world.patch.transpose -= 1;
 
         this.world.updateSequence();
     }

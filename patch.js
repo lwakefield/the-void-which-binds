@@ -9,20 +9,21 @@ function notesInScale (tonic, scale) {
 
 class Patch {
     constructor () {
-        this.bpm     = 100;
-        this.tonic   = 'C4';
-        this.scale   = 'minor pentatonic';
-        this.spread  = 1;
-        this.density = 70;
-        this.divider = 1;
-        this.seed    = 0;
+        this.bpm       = 100;
+        this.tonic     = 'C4';
+        this.scale     = 'minor pentatonic';
+        this.spread    = 1;
+        this.transpose = 0;
+        this.density   = 70;
+        this.divider   = 1;
+        this.seed      = 0;
     }
     toSequence () {
         const res = [];
         const randInt = d3.randomInt.source(d3.randomLcg(this.seed))(0, 100);
         const randNml = d3.randomNormal.source(d3.randomLcg(this.seed))(0, this.spread);
         const notes = notesInScale(this.tonic, this.scale);
-        const tonicIndex = notes.indexOf(this.tonic);
+        const tonicIndex = notes.indexOf(this.tonic) + this.transpose;
         for (let i = 0; i < 16; i++) {
             const hit = randInt() < this.density;
             const offset = Math.round(randNml());
