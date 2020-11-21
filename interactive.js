@@ -13,3 +13,8 @@ process.on('SIGINT', () => {
     World.stop();
     process.exit(0);
 });
+
+// TODO:
+// - [ ] transpose
+// - [ ] sequence mutation
+// - [ ] seed -> words

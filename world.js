@@ -30,6 +30,9 @@ class World {
         this.loop();
     }
     static stop () {
+        for (const chseq of this.channelSequences) {
+            if (chseq.note) chseq.dev.noteOff(chseq.note);
+        }
         this.device.close();
     }
 

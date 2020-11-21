@@ -1,5 +1,7 @@
 const readline = require('readline');
 
+const Tonal = require('@tonaljs/tonal');
+
 const rev = (val) => '\033[7m' + val + '\033[0m';
 
 function seqToString2 (seq) {
