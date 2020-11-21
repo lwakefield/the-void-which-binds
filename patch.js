@@ -17,19 +17,72 @@ class Patch {
         this.density   = 70;
         this.divider   = 1;
         this.seed      = 0;
+        this.mutation  = 1;
+        this.variation = 0;
+        this._sequences = [];
     }
-    toSequence () {
+    rand () {
+        return d3.randomLcg(this.seed);
+    }
+    get sequence () {
+        return this._sequences[this.variation];
+    }
+    get notes () {
+        return notesInScale(this.tonic, this.scale);
+    }
+    get rootIndex () {
+        return this.notes.indexOf(this.tonic) + this.transpose;
+    }
+    toSequence (rand) {
+        if (!rand) rand = this.rand();
+
         const res = [];
-        const randInt = d3.randomInt.source(d3.randomLcg(this.seed))(0, 100);
-        const randNml = d3.randomNormal.source(d3.randomLcg(this.seed))(0, this.spread);
-        const notes = notesInScale(this.tonic, this.scale);
-        const tonicIndex = notes.indexOf(this.tonic) + this.transpose;
+        const randInt = d3.randomInt.source(rand)(0, 100);
+        const randNml = d3.randomNormal.source(rand)(0, this.spread);
+
         for (let i = 0; i < 16; i++) {
             const hit = randInt() < this.density;
             const offset = Math.round(randNml());
-            res.push(hit ? notes[tonicIndex + offset] : null);
+            res.push(hit ? this.notes[this.rootIndex + offset] : null);
         }
         return res;
+    }
+    baseSequence () {
+        return this.toSequence();
+    }
+    genSequences () {
+        const rand = this.rand();
+        const randInt = d3.randomInt.source(rand);
+        const randNml = d3.randomNormal.source(rand)(0, this.spread);
+
+        const sequences = [this.baseSequence(rand)];
+
+        for (let i = 1; i < 16; i++) {
+            const lastSequence = sequences[i - 1];
+            const nextSequence = [...lastSequence];
+
+
+            for (let j = 0; j < this.mutation; j++) {
+                const type = randInt(0, 100)() > 50 ? 'rhythm' : 'note';
+
+                const index = randInt(0, nextSequence.length)();
+                const offset = Math.round(randNml());
+                if (type === 'rhythm') {
+                    if (nextSequence[index]) {
+                        nextSequence[index] = null;
+                    } else {
+                        nextSequence[index] = this.notes[this.rootIndex + offset];
+                    }
+                } else {
+                    nextSequence[index] = this.notes[this.rootIndex + offset];
+                }
+            }
+
+
+            sequences.push(nextSequence);
+        }
+
+        this._sequences = sequences;
     }
     toString () {
         let str = '';

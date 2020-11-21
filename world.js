@@ -19,6 +19,7 @@ class World {
             this.patches.push(new Patch());
             if (i > 0) last(this.patches).density = 0;
 
+            last(this.patches).genSequences();
             this.channelSequences.push(new ChannelSequence(this.device, i));
             last(this.channelSequences).updateFromPatch(last(this.patches));
         }
@@ -68,6 +69,7 @@ class World {
     }
 
     static updateSequence () {
+        this.patch.genSequences();
         this.channelSequence.updateFromPatch(this.patch);
     }
 }

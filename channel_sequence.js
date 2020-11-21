@@ -32,7 +32,7 @@ class ChannelSequence {
         this.note && this.dev.noteOn(this.note, 127, this.channel);
     }
     updateFromPatch (patch) {
-        this.seq = patch.toSequence();
+        this.seq = patch.sequence;
         this.divider = patch.divider;
     }
 }
