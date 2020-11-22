@@ -35,14 +35,14 @@ class UI {
             mkitem(this.channelName(6), () => seqToString2(this.world.channelSequences[6]), this.channelHandler(6)),
             mkitem(this.channelName(7), () => seqToString2(this.world.channelSequences[7]), this.channelHandler(7)),
             mkseparator(),
-            mkitem('seed:      ', () => this.world.patch.seed.toString(36), this.reseedHandler),
-            mkitem('tonic:     ', () => this.world.patch.tonic,     this.tonicHandler),
-            mkitem('transpose: ', () => this.world.patch.transpose, this.rangeHandler('transpose', {min:-12,max:12,step:1})),
-            mkitem('scale:     ', () => this.world.patch.scale,     this.rangeHandler('scale', Tonal.Scale.names())),
-            mkitem('spread:    ', () => this.world.patch.spread,    this.rangeHandler('spread', {min:0,max:250,step:10})),
-            mkitem('density:   ', () => this.world.patch.density,   this.rangeHandler('density', {min:0,max:100,step:5})),
-            mkitem('mutation:  ', () => this.world.patch.mutation,  this.rangeHandler('mutation', {min: 0,max:16,step:1})),
-            mkitem('divider:   ', () => this.world.patch.divider,   this.rangeHandler('divider', [0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])),
+            mkitem(this._itemName('seed'),      () => this.world.patch.seed.toString(36), this.reseedHandler),
+            mkitem(this._itemName('tonic'),     () => this.world.patch.tonic,     this.tonicHandler),
+            mkitem(this._itemName('transpose'), () => this.world.patch.transpose, this.rangeHandler('transpose', {min:-12,max:12,step:1})),
+            mkitem(this._itemName('scale'),     () => this.world.patch.scale,     this.rangeHandler('scale', Tonal.Scale.names())),
+            mkitem(this._itemName('spread'),    () => this.world.patch.spread,    this.rangeHandler('spread', {min:0,max:250,step:10})),
+            mkitem(this._itemName('density'),   () => this.world.patch.density,   this.rangeHandler('density', {min:0,max:100,step:5})),
+            mkitem(this._itemName('mutation'),  () => this.world.patch.mutation,  this.rangeHandler('mutation', {min: 0,max:16,step:1})),
+            mkitem(this._itemName('divider'),   () => this.world.patch.divider,   this.rangeHandler('divider', [0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])),
             // mkitem(
             //     () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
             //     () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
@@ -50,6 +50,16 @@ class UI {
             // ),
             mkitem('sync:'.padEnd(11),    () => this.world.sync),
         ];
+    }
+
+    static _itemName (n) {
+        return () => {
+            let str = '';
+            str += this.world.sync[n] ? '*' : ' ';
+            str += n;
+            str += ':';
+            return str.padEnd(14);
+        }
     }
 
     static drawScreen () {
@@ -124,24 +134,44 @@ class UI {
         if (k === '\r') this.world.patch.seed = Math.round(Math.random() * MAX_UINT32);
         if (k === 'l')  this.world.patch.seed += 1;
         if (k === 'h')  this.world.patch.seed -= 1;
+        if (k === '\t') this.world.sync.seed = !this.world.sync.seed;
 
         if (this.world.patch.seed > MAX_UINT32) this.world.patch.seed = 0;
         if (this.world.patch.seed < 0)          this.world.patch.seed = MAX_UINT32;
 
-        this.world.updateSequence();
+
+        if (this.world.sync.seed) {
+            for (let i = 0; i < this.world.patches.length; i++) {
+                this.world.patches[i].seed = this.world.patch.seed;
+                this.world.updateSequence(i);
+            }
+        } else {
+            this.world.updateSequence();
+        }
     }
 
     static tonicHandler (k) {
         const tonic = this.world.patch.tonic;
         if (k === 'l') this.world.patch.tonic = Tonal.Note.simplify(Tonal.transpose(tonic, '2m'));
         if (k === 'h') this.world.patch.tonic = Tonal.Note.simplify(Tonal.transpose(tonic, '-2m'));
+        if (k === '\t') this.world.sync.tonic = !this.world.sync.tonic;
 
         this.world.updateSequence();
+        if (this.world.sync.tonic) {
+            for (let i = 0; i < this.world.patches.length; i++) {
+                this.world.patches[i].tonic = this.world.patch.tonic;
+                this.world.updateSequence(i);
+            }
+        } else {
+            this.world.updateSequence();
+        }
     }
 
     static rangeHandler (name, range) {
         return (k) => {
             let val = this.world.patch[name];
+
+            if (k === '\t') { this.world.sync[name] = !(this.world.sync[name]); }
 
             if (range instanceof Array) {
                 let index = range.indexOf(val);
@@ -163,7 +193,14 @@ class UI {
                 this.world.patch[name] = val;
             }
 
-            this.world.updateSequence();
+            if (this.world.sync[name]) {
+                for (let i = 0; i < this.world.patches.length; i++) {
+                    this.world.patches[i][name] = this.world.patch[name];
+                    this.world.updateSequence(i);
+                }
+            } else {
+                this.world.updateSequence();
+            }
         };
     }
     static bpmHandler (k) { }

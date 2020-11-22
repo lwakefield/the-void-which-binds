@@ -5,13 +5,15 @@ const { ChannelSequence } = require('./channel_sequence.js');
 const { last, cmpArr }    = require('./util.js');
 
 class World {
-    static sync = true;
+    // static sync = true;
     static channel = -1;
     static mode = null;
 
     static device = new Device();
     static patches = [];
     static channelSequences = [];
+
+    static sync = {};
 
     static init () {
         const NUM_CHANNELS = 8;
