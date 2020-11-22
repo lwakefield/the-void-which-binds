@@ -12,7 +12,7 @@ class Patch {
         this.bpm       = 100;
         this.tonic     = 'C4';
         this.scale     = 'minor pentatonic';
-        this.spread    = 1;
+        this.spread    = 100;
         this.transpose = 0;
         this.density   = 70;
         this.divider   = 1;
@@ -38,7 +38,7 @@ class Patch {
 
         const res = [];
         const randInt = d3.randomInt.source(rand)(0, 100);
-        const randNml = d3.randomNormal.source(rand)(0, this.spread);
+        const randNml = d3.randomNormal.source(rand)(0, this.spread/100);
 
         for (let i = 0; i < 16; i++) {
             const hit = randInt() < this.density;
@@ -53,7 +53,7 @@ class Patch {
     genSequences () {
         const rand = this.rand();
         const randInt = d3.randomInt.source(rand);
-        const randNml = d3.randomNormal.source(rand)(0, this.spread);
+        const randNml = d3.randomNormal.source(rand)(0, this.spread/100);
 
         const sequences = [this.baseSequence(rand)];
 

@@ -154,8 +154,8 @@ class UI {
     }
 
     static spreadHandler (k) {
-        if (k === 'l') { this.world.patch.spread += 0.1; }
-        if (k === 'h') { this.world.patch.spread -= 0.1; }
+        if (k === 'l') { this.world.patch.spread += 10; }
+        if (k === 'h') { this.world.patch.spread -= 10; }
 
         this.world.updateSequence();
     }
