@@ -35,13 +35,13 @@ class UI {
             mkitem(this.channelName(6), () => seqToString2(this.world.channelSequences[6]), this.channelHandler(6)),
             mkitem(this.channelName(7), () => seqToString2(this.world.channelSequences[7]), this.channelHandler(7)),
             mkseparator(),
-            mkitem('seed:'.padEnd(11),      () => this.world.patch.seed,      this.reseedHandler),
-            mkitem('tonic:'.padEnd(11),     () => this.world.patch.tonic,     this.tonicHandler),
-            mkitem('transpose:'.padEnd(11), () => this.world.patch.transpose, this.transposeHandler),
-            mkitem('scale:'.padEnd(11),     () => this.world.patch.scale,     this.scaleHandler),
-            mkitem('spread:'.padEnd(11),    () => this.world.patch.spread,    this.spreadHandler),
-            mkitem('density:'.padEnd(11),   () => this.world.patch.density,   this.densityHandler),
-            mkitem('mutation:'.padEnd(11),  () => this.world.patch.mutation,  this.mutationHandler),
+            mkitem('seed:'.padEnd(11),      () => this.world.patch.seed.toString(36), this.reseedHandler),
+            mkitem('tonic:'.padEnd(11),     () => this.world.patch.tonic,             this.tonicHandler),
+            mkitem('transpose:'.padEnd(11), () => this.world.patch.transpose,         this.transposeHandler),
+            mkitem('scale:'.padEnd(11),     () => this.world.patch.scale,             this.scaleHandler),
+            mkitem('spread:'.padEnd(11),    () => this.world.patch.spread,            this.spreadHandler),
+            mkitem('density:'.padEnd(11),   () => this.world.patch.density,           this.densityHandler),
+            mkitem('mutation:'.padEnd(11),  () => this.world.patch.mutation,          this.mutationHandler),
             mkitem(
                 () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
                 () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
@@ -119,7 +119,13 @@ class UI {
     }
 
     static reseedHandler (k)  {
-        if (k === '\r') this.world.patch.seed = Math.random() 
+        const MAX_UINT32 = 4294967295;
+        if (k === '\r') this.world.patch.seed = Math.round(Math.random() * MAX_UINT32);
+        if (k === 'l')  this.world.patch.seed += 1;
+        if (k === 'h')  this.world.patch.seed -= 1;
+
+        if (this.world.patch.seed > MAX_UINT32) this.world.patch.seed = 0;
+        if (this.world.patch.seed < 0)          this.world.patch.seed = MAX_UINT32;
 
         this.world.updateSequence();
     }
