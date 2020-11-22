@@ -35,18 +35,19 @@ class UI {
             mkitem(this.channelName(6), () => seqToString2(this.world.channelSequences[6]), this.channelHandler(6)),
             mkitem(this.channelName(7), () => seqToString2(this.world.channelSequences[7]), this.channelHandler(7)),
             mkseparator(),
-            mkitem('seed:'.padEnd(11),      () => this.world.patch.seed.toString(36), this.reseedHandler),
-            mkitem('tonic:'.padEnd(11),     () => this.world.patch.tonic,             this.tonicHandler),
-            mkitem('transpose:'.padEnd(11), () => this.world.patch.transpose,         this.transposeHandler),
-            mkitem('scale:'.padEnd(11),     () => this.world.patch.scale,             this.scaleHandler),
-            mkitem('spread:'.padEnd(11),    () => this.world.patch.spread,            this.spreadHandler),
-            mkitem('density:'.padEnd(11),   () => this.world.patch.density,           this.densityHandler),
-            mkitem('mutation:'.padEnd(11),  () => this.world.patch.mutation,          this.mutationHandler),
-            mkitem(
-                () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
-                () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
-                (...a) => this.world.sync ? this.dividerHandler(...a) : this.bpmHandler(...a)
-            ),
+            mkitem('seed:      ', () => this.world.patch.seed.toString(36), this.reseedHandler),
+            mkitem('tonic:     ', () => this.world.patch.tonic,     this.tonicHandler),
+            mkitem('transpose: ', () => this.world.patch.transpose, this.rangeHandler('transpose', {min:-12,max:12,step:1})),
+            mkitem('scale:     ', () => this.world.patch.scale,     this.rangeHandler('scale', Tonal.Scale.names())),
+            mkitem('spread:    ', () => this.world.patch.spread,    this.rangeHandler('spread', {min:0,max:250,step:10})),
+            mkitem('density:   ', () => this.world.patch.density,   this.rangeHandler('density', {min:0,max:100,step:5})),
+            mkitem('mutation:  ', () => this.world.patch.mutation,  this.rangeHandler('mutation', {min: 0,max:16,step:1})),
+            mkitem('divider:   ', () => this.world.patch.divider,   this.rangeHandler('divider', [0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])),
+            // mkitem(
+            //     () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
+            //     () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
+            //     (...a) => this.world.sync ? this.dividerHandler(...a) : this.bpmHandler(...a)
+            // ),
             mkitem('sync:'.padEnd(11),    () => this.world.sync),
         ];
     }
@@ -138,53 +139,32 @@ class UI {
         this.world.updateSequence();
     }
 
-    static transposeHandler (k) {
-        if (k === 'l') this.world.patch.transpose += 1;
-        if (k === 'h') this.world.patch.transpose -= 1;
+    static rangeHandler (name, range) {
+        return (k) => {
+            let val = this.world.patch[name];
 
-        this.world.updateSequence();
-    }
+            if (range instanceof Array) {
+                let index = range.indexOf(val);
 
-    static scaleHandler (k) {
-        const scales = Tonal.Scale.names();
-        let index = scales.indexOf(this.world.patch.scale);
+                if (k === 'l') index += 1;
+                if (k === 'h') index -= 1;
 
-        if (k === 'l') { index += 1 }
-        if (k === 'h') { index -= 1 }
+                if (index >= range.length) index = range.length - 1;
+                if (index < 0)             index = 0;
 
-        if (index >= scales.length) { index = 0 }
-        if (index < 0)              { index = scales.length - 1 }
+                this.world.patch[name] = range[index];
+            } else {
+                if (k === 'l') val += range.step;
+                if (k === 'h') val -= range.step;
 
-        this.world.patch.scale = scales[index];
-        this.world.updateSequence();
-    }
+                if (val > range.max) val = range.max;
+                if (val < range.min) val = range.min;
 
-    static spreadHandler (k) {
-        if (k === 'l') { this.world.patch.spread += 10; }
-        if (k === 'h') { this.world.patch.spread -= 10; }
+                this.world.patch[name] = val;
+            }
 
-        this.world.updateSequence();
-    }
-
-    static densityHandler (k) {
-        if (k === 'l') { this.world.patch.density += 5; }
-        if (k === 'h') { this.world.patch.density -= 5; }
-
-        this.world.updateSequence();
-    }
-
-    static mutationHandler (k) {
-        if (k === 'l') { this.world.patch.mutation += 1; }
-        if (k === 'h') { this.world.patch.mutation -= 1; }
-
-        this.world.updateSequence();
-    }
-
-    static dividerHandler (k) {
-        if (k === 'l') { this.world.patch.divider *= 2; }
-        if (k === 'h') { this.world.patch.divider /= 2; }
-
-        this.world.updateSequence();
+            this.world.updateSequence();
+        };
     }
     static bpmHandler (k) { }
 }

@@ -16,7 +16,7 @@ class ChannelSequence {
     tick () {
         this.clock += 1;
 
-        if (this.run && (this.clock / this.divider) % 24 === 0) {
+        if (this.run && (this.clock / this.divider) % 6 === 0) {
             this.nextNote();
         }
     }
