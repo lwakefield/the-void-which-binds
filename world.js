@@ -68,9 +68,14 @@ class World {
         return this.channelSequences[this.channel];
     }
 
-    static updateSequence () {
-        this.patch.genSequences();
-        this.channelSequence.updateFromPatch(this.patch);
+    static updateSequence (channel) {
+        if (typeof channel !== 'undefined') {
+            this.patches[channel].genSequences();
+            this.channelSequences[channel].updateFromPatch(this.patches[channel]);
+        } else {
+            this.patch.genSequences();
+            this.channelSequence.updateFromPatch(this.patch);
+        }
     }
 }
 

@@ -17,15 +17,15 @@ class Patch {
         this.density   = 70;
         this.divider   = 1;
         this.seed      = 0;
-        this.mutation  = 1;
+        this.mutation  = 2;
         this.variation = 0;
-        this._sequences = [];
+        this.sequences = [];
     }
     rand () {
         return d3.randomLcg(this.seed);
     }
     get sequence () {
-        return this._sequences[this.variation];
+        return this.sequences[this.variation];
     }
     get notes () {
         return notesInScale(this.tonic, this.scale);
@@ -82,7 +82,7 @@ class Patch {
             sequences.push(nextSequence);
         }
 
-        this._sequences = sequences;
+        this.sequences = sequences;
     }
     toString () {
         let str = '';

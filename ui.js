@@ -41,6 +41,7 @@ class UI {
             mkitem('scale:'.padEnd(11),     () => this.world.patch.scale,     this.scaleHandler),
             mkitem('spread:'.padEnd(11),    () => this.world.patch.spread,    this.spreadHandler),
             mkitem('density:'.padEnd(11),   () => this.world.patch.density,   this.densityHandler),
+            mkitem('mutation:'.padEnd(11),  () => this.world.patch.mutation,  this.mutationHandler),
             mkitem(
                 () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
                 () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
@@ -97,15 +98,27 @@ class UI {
     // item fns under here
     // vvvvvvvvvvvvvvvvvvv
 
-    static channelName (c) { return () => this.world.channel === c ? `>seq${c}` : ` seq${c}`; }
+    static channelName (c) {
+        return () => this.world.channel === c 
+            ? `>seq${c}/${this.world.patches[c].variation}`.padEnd(8) 
+            : ` seq${c}/${this.world.patches[c].variation}`.padEnd(8);
+    }
+
     static channelHandler (c) {
         return (k) => {
+            const patch = this.world.patches[c];
             if (k === '\r') this.world.channel = c;
+            if (k === 'l') { patch.variation += 1; }
+            if (k === 'h') { patch.variation -= 1; }
+
+            if (patch.variation >= patch.sequences.length) { patch.variation = 0; }
+            if (patch.variation < 0)                       { patch.variation = patch.sequences.length - 1; }
+
+            this.world.updateSequence(c);
         }
     }
 
     static reseedHandler (k)  {
-        console.log(this);
         if (k === '\r') this.world.patch.seed = Math.random() 
 
         this.world.updateSequence();
@@ -120,7 +133,6 @@ class UI {
     }
 
     static transposeHandler (k) {
-        const transpose = this.world.patch.transpose;
         if (k === 'l') this.world.patch.transpose += 1;
         if (k === 'h') this.world.patch.transpose -= 1;
 
@@ -151,6 +163,13 @@ class UI {
     static densityHandler (k) {
         if (k === 'l') { this.world.patch.density += 5; }
         if (k === 'h') { this.world.patch.density -= 5; }
+
+        this.world.updateSequence();
+    }
+
+    static mutationHandler (k) {
+        if (k === 'l') { this.world.patch.mutation += 1; }
+        if (k === 'h') { this.world.patch.mutation -= 1; }
 
         this.world.updateSequence();
     }
