@@ -20,3 +20,4 @@ process.on('SIGINT', () => {
 // - [x] seed -> words
 // - [ ] step length
 // - [ ] lock
+// - [ ] rhythm/emphasis
