@@ -5,7 +5,6 @@ const { ChannelSequence } = require('./channel_sequence.js');
 const { last, cmpArr }    = require('./util.js');
 
 class World {
-    // static sync = true;
     static channel = -1;
     static mode = null;
 
@@ -40,9 +39,7 @@ class World {
     }
 
     static loop () {
-        this.device.input.on('message', (time, msg) => {
-            if (this.sync === false) return;
-
+        this.device.handler = (time, msg) => {
             if (cmpArr(msg, [248])) {
                 if (time === 0) {
                     this.channelSequences.forEach(s => s.reset());
@@ -59,7 +56,7 @@ class World {
             }
 
             if (this.mode === 'ui') UI.redraw();
-        });
+        };
     }
 
     static get patch () {

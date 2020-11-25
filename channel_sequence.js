@@ -16,6 +16,10 @@ class ChannelSequence {
     tick () {
         this.clock += 1;
 
+        // we expect the clock rate to be 24 pulses per quarter note
+        // by default, the sequence is 16 steps long and we want the sequence
+        // to be one bar long, therefore, we want to increment the step every
+        // (24 * 4) / 16 = 6 pulses
         if (this.run && (this.clock / this.divider) % 6 === 0) {
             this.nextNote();
         }
