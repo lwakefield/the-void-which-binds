@@ -48,7 +48,10 @@ class UI {
             //     () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
             //     (...a) => this.world.sync ? this.dividerHandler(...a) : this.bpmHandler(...a)
             // ),
-            mkitem('sync:'.padEnd(11),    () => this.world.sync),
+            mkitem(this._itemName('midisync'), () => this.world.midiSync, () => {
+                this.world.midiSync ? this.world.turnOffMidiSync() : this.world.turnOnMidiSync();
+            }),
+            mkitem(this._itemName('bpm'), () => this.world.bpm, this.bpmHandler),
         ];
     }
 
@@ -203,7 +206,12 @@ class UI {
             }
         };
     }
-    static bpmHandler (k) { }
+    static bpmHandler (k) {
+        if (k === 'l') this.world.bpm += 1;
+        if (k === 'h') this.world.bpm -= 1;
+        if (this.world.bpm < 1) this.world.bpm = 1;
+        if (this.world.bpm > 999) this.world.bpm = 999;
+    }
 }
 
 module.exports = UI;

@@ -1,8 +1,8 @@
-const Device              = require('./device.js');
-const Patch               = require('./patch.js');
-const UI                  = require('./ui.js');
-const { ChannelSequence } = require('./channel_sequence.js');
-const { last, cmpArr }    = require('./util.js');
+const Device                  = require('./device.js');
+const Patch                   = require('./patch.js');
+const UI                      = require('./ui.js');
+const { ChannelSequence }     = require('./channel_sequence.js');
+const { last, cmpArr, sleep } = require('./util.js');
 
 class World {
     static channel = -1;
@@ -11,6 +11,9 @@ class World {
     static device = new Device();
     static patches = [];
     static channelSequences = [];
+
+    static bpm = 120;
+    static midiSync = true;
 
     static sync = {};
 
@@ -38,7 +41,7 @@ class World {
         this.device.close();
     }
 
-    static loop () {
+    static async loop () {
         this.device.handler = (time, msg) => {
             if (cmpArr(msg, [248])) {
                 if (time === 0) {
@@ -57,6 +60,29 @@ class World {
 
             if (this.mode === 'ui') UI.redraw();
         };
+
+        while (true) {
+            if (!this.midiSync) {
+                this.channelSequences.forEach(s => s.tick());
+            }
+            let delay = 60_000 / (this.bpm * 24);
+
+            const $sleep = sleep(delay);
+
+            if (this.mode === 'ui') UI.redraw();
+
+            await $sleep;
+        }
+    }
+
+    static turnOnMidiSync () {
+        this.midiSync = true;
+        this.channelSequences.forEach(s => s.run = false);
+    }
+
+    static turnOffMidiSync () {
+        this.midiSync = false;
+        this.channelSequences.forEach(s => s.run = true);
     }
 
     static get patch () {
