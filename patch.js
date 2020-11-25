@@ -19,6 +19,7 @@ class Patch {
         this.seed      = 0;
         this.mutation  = 2;
         this.variation = 0;
+        this.steps     = 16;
         this.sequences = [];
     }
     rand () {
@@ -40,7 +41,7 @@ class Patch {
         const randInt = d3.randomInt.source(rand)(0, 100);
         const randNml = d3.randomNormal.source(rand)(0, this.spread/100);
 
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < this.steps; i++) {
             const hit = randInt() < this.density;
             const offset = Math.round(randNml());
             res.push(hit ? this.notes[this.rootIndex + offset] : null);
@@ -57,7 +58,8 @@ class Patch {
 
         const sequences = [this.baseSequence(rand)];
 
-        for (let i = 1; i < 16; i++) {
+        const numOfMutatedSequences = 16;
+        for (let i = 1; i < numOfMutatedSequences; i++) {
             const lastSequence = sequences[i - 1];
             const nextSequence = [...lastSequence];
 

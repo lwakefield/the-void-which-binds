@@ -43,6 +43,7 @@ class UI {
             mkitem(this._itemName('density'),   () => this.world.patch.density,   this.rangeHandler('density', {min:0,max:100,step:5})),
             mkitem(this._itemName('mutation'),  () => this.world.patch.mutation,  this.rangeHandler('mutation', {min: 0,max:16,step:1})),
             mkitem(this._itemName('divider'),   () => this.world.patch.divider,   this.rangeHandler('divider', [0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])),
+            mkitem(this._itemName('steps'),     () => this.world.patch.steps,     this.rangeHandler('steps', {min:0,max:16,step:1})),
             // mkitem(
             //     () => (this.world.sync ? 'div:' : 'bpm:').padEnd(11),
             //     () => this.world.sync ? this.world.patch.divider : this.world.patch.bpm,
@@ -161,6 +162,7 @@ class UI {
 
         this.world.updateSequence();
         if (this.world.sync.tonic) {
+            // TODO: do we prefer setting the same tonic for all, or increasing all by 1?
             for (let i = 0; i < this.world.patches.length; i++) {
                 this.world.patches[i].tonic = this.world.patch.tonic;
                 this.world.updateSequence(i);
