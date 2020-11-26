@@ -93,6 +93,13 @@ class World {
         return this.channelSequences[this.channel];
     }
 
+    static updateSequences () {
+        for (let i = 0; i < this.patches.length; i++) {
+            this.patches[i].genSequences();
+            this.channelSequences[i].updateFromPatch(this.patches[i]);
+        }
+    }
+
     static updateSequence (channel) {
         if (typeof channel !== 'undefined') {
             this.patches[channel].genSequences();

@@ -2,6 +2,7 @@ const World = require('./world.js');
 const UI    = require('./ui.js');
 
 require('./log.js').patch();
+require('./helpers.js').patch();
 
 log('global', 'initializing...');
 
@@ -27,6 +28,6 @@ process.on('SIGINT', () => {
 // - [x] transpose
 // - [x] sequence mutation
 // - [x] seed -> words
-// - [ ] step length
+// - [x] step length
 // - [ ] lock
 // - [ ] rhythm/emphasis
